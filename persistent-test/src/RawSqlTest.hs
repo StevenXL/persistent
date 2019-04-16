@@ -10,6 +10,11 @@ import PersistentTestModels
 
 specsWith :: Runner SqlBackend m => RunDb SqlBackend m -> Spec
 specsWith runDb = describe "rawSql" $ do
+  it "Can UPDATE" $ runDb $ do
+      Entity p1k p1 <- insertEntity $ Person "Mathias" 23 Nothing
+      ret <- rawSql "UPDATE person SET age = 55" []
+      let p1' = p1 { personAge = 55 }
+      liftIO $ ret @?= [Entity p1k p1']
   it "2+2" $ runDb $ do
       ret <- rawSql "SELECT 2+2" []
       liftIO $ ret @?= [Single (4::Int)]
